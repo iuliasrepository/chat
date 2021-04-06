@@ -13,10 +13,13 @@
     "fastify-plugin": "^3.0.0",
     "fastify-postgres": "^3.5.0",
     "fastify-sensible": "^3.1.0",
+    "node-sass": "^5.0.0",
     "pg": "^8.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.0.1"
   },
   "scripts": {

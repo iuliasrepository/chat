@@ -1,25 +1,27 @@
 import './App.css';
-import React, { useState, useEffect } from "react";
-import AuthPage from "./AuthPage";
-import MainPage from "./MainPage";
-import dataHandler from "../dataHandler.js";
+import React, {useContext} from "react";
+import LoginPage from "./LoginPage/LoginPage";
+import MainPage from "./MainPage/MainPage";
 
 function App() {
-  const [users, setUsers] = useState([])
-  useEffect(() => dataHandler.getUsers().then(result => setUsers(result)), [])
-  return (
-    <div className="App">
-      {console.log(users)}
-    </div>
-  );
-
-  /*const
-      [authStatus, setAuthStatus] = useState(false),
-      pageView = authStatus ? <AuthPage /> : <MainPage />
+  //console.log('app')
+  const
+      UserContext = React.createContext(null),
+      activeUser = useContext(UserContext),
+      pageView = activeUser ? <MainPage /> : <LoginPage />
+      console.log(activeUser)
 
   return (
       pageView
-    )*/
+    )
 }
 
 export default App;
+
+/*const [users, setUsers] = useState([])
+useEffect(() => dataHandler.getUsers().then(result => setUsers(result)), [])
+return (
+  <div className="App">
+    {console.log(users)}
+  </div>
+);*/
