@@ -1,6 +1,6 @@
 import React from "react"
 import dataHandler from "../../../dataHandler"
-import styles from "./authForm.module.sass"
+import styles from "../loginForm.module.sass"
 
 function AuthForm () {
     const onSubmit = (e) => {

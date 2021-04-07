@@ -1,5 +1,5 @@
 import React from "react"
-import { Switch, Route, Link } from "react-router-dom"
+import {Switch, Route, NavLink} from "react-router-dom"
 import AuthForm from "./AuthForm/AuthForm"
 import RegisterForm from "./RegisterForm/RegisterForm"
 import styles from './loginPage.module.sass'
@@ -9,21 +9,17 @@ function LoginPage () {
             <div className={styles.wrapper}>
                 <div className={styles.header}>
                     <div className={styles.titleBlock}>
-                        Chat
+                        <span>Chat</span>
                     </div>
                 </div>
                 <div className={styles.content}>
                     <div className={styles.navbar}>
-                        <nav>
-                            <ul>
-                                <li>
-                                    <Link to="/auth">Авторизация</Link>
-                                </li>
-                                <li>
-                                    <Link to="/register">Регистрация</Link>
-                                </li>
-                            </ul>
-                        </nav>
+                        <div className={styles.link}>
+                            <NavLink to="/auth" activeClassName={styles.selected}>Авторизация</NavLink>
+                        </div>
+                        <div className={styles.link}>
+                            <NavLink to="/register" activeClassName={styles.selected}>Регистрация</NavLink>
+                        </div>
                     </div>
                     <div className={styles.formWrapper}>
                         <Switch>

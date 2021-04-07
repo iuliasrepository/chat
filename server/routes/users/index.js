@@ -8,4 +8,12 @@ module.exports = async function (fastify, opts) {
   fastify.get('/:id', async function (request, reply) {
     return fastify.users.getById(request.params.id)
   })
+
+  fastify.get('/name=:name', async function (request, reply) {
+    return fastify.users.isNameExist(request.params.name)
+  })
+
+  fastify.get('/email=:email', async function (request, reply) {
+    return fastify.users.isEmailExist(request.params.email)
+  })
 }
