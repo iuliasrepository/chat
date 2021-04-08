@@ -12,44 +12,50 @@ function RegisterForm () {
             fields.forEach(field => field.setCustomValidity(msg))
         },
 
-        onSubmit = e => {
+        handleClientErrors = err => {
+        if (err.code === "23505") {
+            const errField = err.constraint,
+                errDetails = errField === "users_name_uindex"
+                    ? [ [document.forms.registerForm.login], 'Такой логин уже существует']
+                    : errField === "users_email_deleted_at_uindex"
+                        ? [ [document.forms.registerForm.email], 'Такой email уже зарегистрирован']
+                        : console.error('Уникальное поле не обработано')
+
+                rejectFields(...errDetails)
+        } else
+            console.log(err.message)
+        },
+
+        onSubmit = async e => {
             e.preventDefault()
             const formData = new FormData(e.target),
-                data = Object.fromEntries(formData.delete('confirmPassword'))
-
-            //dataHandler.registerUser(data)
+                data = Object.fromEntries(formData),
+                response = await dataHandler.addUser(data)
+            response.error ? handleClientErrors(response.error) : console.log(response)
         },
 
         onBlurLogin = async e => {
             const
                 field = e.target,
-                login = field.value.length > 3
-                    ? await dataHandler.isNameExist(field.value)
-                    : rejectFields([field], 'Длина логина не менее 4 символов')
-                console.log(login)
-            //login.length ? rejectFields([field], 'Такой логин уже существует') : confirmFields([field])
+                isExist = await dataHandler.isNameExist(field.value)
+            isExist ? rejectFields([field], 'Такой логин уже существует') : confirmFields([field])
         },
 
         onBlurEmail = async e => {
             const
                 field = e.target,
-                email = await dataHandler.isEmailExist(field.value)
-            console.log(email)
-
-            //email.length ? rejectFields([field], 'Такой email уже зарегистрирован') : confirmFields([field])
+                isExist = await dataHandler.isEmailExist(field.value)
+            isExist ? rejectFields([field], 'Такой email уже зарегистрирован') : confirmFields([field])
         },
 
         onBlurCPassword = e => {
             const
                 currentForm = document.forms.registerForm,
-                fields = [currentForm.password, currentForm.confirmPassword]
+                fields = [currentForm.password, e.target]
             e.target.value === currentForm.password.value
                 ? confirmFields(fields)
                 : rejectFields(fields, 'Пароли не совпадают')
-        },
-
-        onFocusField = e =>
-            e.target.classList.remove(styles.confirmedField, styles.rejectedField)
+        }
 
 
     return (
@@ -57,33 +63,29 @@ function RegisterForm () {
             <div>
                 <label htmlFor="login">Login</label>
                 <input type="text" id="login" name="login"
-                       //onBlur={onBlurLogin}
-                       //onFocus={onFocusField}
-                       minLength="4"
+                       onBlur={onBlurLogin}
+                       minLength="3"
                        required
                 />
             </div>
             <div>
                 <label htmlFor="email">Email</label>
                 <input type="email" id="email" name="email"
-                       //onBlur={onBlurEmail}
-                       //onFocus={onFocusField}
+                       onBlur={onBlurEmail}
                        required
                 />
             </div>
             <div>
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" name="password"
-                       //onFocus={onFocusField}
                        minLength="4"
                        required
                 />
             </div>
             <div>
                 <label htmlFor="confirmPassword">Confirm your password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword"
+                <input type="password" id="confirmPassword"
                        onBlur={onBlurCPassword}
-                       //onFocus={onFocusField}
                        minLength="4"
                        required
                 />

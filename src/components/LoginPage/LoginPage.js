@@ -1,5 +1,5 @@
 import React from "react"
-import {Switch, Route, NavLink} from "react-router-dom"
+import {Switch, Route, NavLink, Redirect} from "react-router-dom"
 import AuthForm from "./AuthForm/AuthForm"
 import RegisterForm from "./RegisterForm/RegisterForm"
 import styles from './loginPage.module.sass'
@@ -23,6 +23,7 @@ function LoginPage () {
                     </div>
                     <div className={styles.formWrapper}>
                         <Switch>
+                            <Redirect exact from="/" to="/auth" />
                             <Route exact path="/auth">
                                 <AuthForm />
                             </Route>

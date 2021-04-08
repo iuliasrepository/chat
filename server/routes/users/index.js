@@ -16,4 +16,8 @@ module.exports = async function (fastify, opts) {
   fastify.get('/email=:email', async function (request, reply) {
     return fastify.users.isEmailExist(request.params.email)
   })
+
+  fastify.post('/', async function (request, reply) {
+    return fastify.users.addUser(request.body)
+  })
 }

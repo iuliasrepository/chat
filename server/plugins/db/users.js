@@ -1,6 +1,8 @@
 'use strict'
 
-const fp = require('fastify-plugin')
+const
+    fp = require('fastify-plugin'),
+    { v4: uuidv4 } = require('uuid');
 
 module.exports = fp(async (fastify, opts) => {
     fastify.decorate('users', {
@@ -22,7 +24,7 @@ module.exports = fp(async (fastify, opts) => {
         isNameExist: async name => {
             const client = await fastify.pg.connect()
             const { rows } = await client.query(
-                'SELECT id, "name" FROM users WHERE "name"=$1',
+                'SELECT COUNT(1) FROM users WHERE "name"=$1',
                 [name]
             )
             client.release()
@@ -31,11 +33,25 @@ module.exports = fp(async (fastify, opts) => {
         isEmailExist: async email => {
             const client = await fastify.pg.connect()
             const { rows } = await client.query(
-                'SELECT id, email FROM users WHERE email=$1',
+                'SELECT COUNT(1) FROM users WHERE email=$1',
                 [email]
             )
             client.release()
             return rows
+        },
+        addUser: async ({ login, email, password} ) => {
+            try {
+                const client = await fastify.pg.connect()
+                const { rows } = await client.query(
+                    'INSERT INTO users ( id, "name", email, "pass", deleted_at ) VALUES ($1, $2, $3, $4, DEFAULT ) RETURNING id, "name"',
+                    [uuidv4(), login, email, password]
+                )
+                client.release()
+                return rows
+            } catch (err) {
+                return {error: err}
+            }
+
         }
     })
 })
