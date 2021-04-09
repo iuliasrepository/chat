@@ -17,6 +17,10 @@ module.exports = async function (fastify, opts) {
     return fastify.users.isEmailExist(request.params.email)
   })
 
+  fastify.get('/:email/:password', async function (request, reply) {
+    return fastify.users.loginUser(request.params)
+  })
+
   fastify.post('/', async function (request, reply) {
     return fastify.users.addUser(request.body)
   })

@@ -16,7 +16,7 @@ const dataHandler = {
             .then(result => !!(+result[0].count))
             .catch(() => false),
 
-    addUser : data =>
+    addUser : async data =>
         fetch('http://localhost:3000/users', {
             method: 'POST',
             headers: {
@@ -24,13 +24,11 @@ const dataHandler = {
             },
             body: JSON.stringify(data)
         })
-            .then(response=>response.json())
-            //.then(result => result)
-            /*.then(response=>console.log(response.json()))
-            .catch(err=>alert(err.status))*/
+            .then(response=>response.json()),
 
-
-
+    authUser : async ({ email, password }) =>
+        fetch(`http://localhost:3000/users/${email}/${password}`)
+            .then(response => response.json())
 }
 
 module.exports = dataHandler

@@ -2,7 +2,8 @@
 
 const
     fp = require('fastify-plugin'),
-    { v4: uuidv4 } = require('uuid');
+    { v4: uuidv4 } = require('uuid'),
+    crypto = require('crypto')
 
 module.exports = fp(async (fastify, opts) => {
     fastify.decorate('users', {
@@ -40,11 +41,15 @@ module.exports = fp(async (fastify, opts) => {
             return rows
         },
         addUser: async ({ login, email, password} ) => {
+            const
+                salt = crypto.randomBytes(8).toString('hex'),
+                hash = crypto.pbkdf2Sync(password, salt,
+                    500, 32, `sha512`).toString(`hex`)
             try {
                 const client = await fastify.pg.connect()
                 const { rows } = await client.query(
-                    'INSERT INTO users ( id, "name", email, "pass", deleted_at ) VALUES ($1, $2, $3, $4, DEFAULT ) RETURNING id, "name"',
-                    [uuidv4(), login, email, password]
+                    'INSERT INTO users ( id, "name", email, "pass", salt ) VALUES ($1, $2, $3, $4, $5 ) RETURNING id, "name"',
+                    [uuidv4(), login, email, hash, salt]
                 )
                 client.release()
                 return rows
@@ -52,6 +57,28 @@ module.exports = fp(async (fastify, opts) => {
                 return {error: err}
             }
 
+        },
+        loginUser: async ({ email, password }) => {
+            try {
+                const client = await fastify.pg.connect(),
+                { rows } = await client.query(
+                        'SELECT id, "name", salt, "pass" FROM users WHERE email=$1 AND deleted_at IS NULL',
+                        [email]
+                    )
+                if (!rows.length)
+                    throw 'Пользователь не зарегистрирован'
+                const
+                    { id, name, salt, pass } = rows[0],
+                    hash = crypto.pbkdf2Sync(password, salt,
+                        500, 32, `sha512`).toString(`hex`)
+                if (hash!==pass)
+                    throw 'Пароль введён не верно'
+
+                client.release()
+                return {id, name}
+            } catch (err) {
+                return {err}
+            }
         }
     })
 })

@@ -23,7 +23,7 @@ function RegisterForm () {
 
                 rejectFields(...errDetails)
         } else
-            console.log(err.message)
+            console.log(err)
         },
 
         onSubmit = async e => {

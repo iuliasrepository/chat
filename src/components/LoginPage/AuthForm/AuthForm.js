@@ -3,10 +3,15 @@ import dataHandler from "../../../dataHandler"
 import styles from "../loginForm.module.sass"
 
 function AuthForm () {
-    const onSubmit = (e) => {
+    const onSubmit = async e => {
         e.preventDefault()
         const data = Object.fromEntries(new FormData(e.target))
-        dataHandler.authUser()
+        dataHandler.authUser(data).then(result => console.log(result))
+        //const response = await dataHandler.authUser(data)
+
+        console.log(data)
+        //console.log(response)
+        //await response.error ? console.log(response.error) : console.log(response)
     }
     return (
         <form name="authForm" onSubmit={onSubmit}>
