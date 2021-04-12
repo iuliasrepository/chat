@@ -1,27 +1,28 @@
 import './App.css';
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import LoginPage from "./LoginPage/LoginPage";
 import MainPage from "./MainPage/MainPage";
+import { UserContext } from "../dataHandler";
+import {Redirect, Route, Switch} from "react-router-dom";
 
 function App() {
-  //console.log('app')
-  const
-      UserContext = React.createContext(null),
-      activeUser = useContext(UserContext),
-      pageView = activeUser ? <MainPage /> : <LoginPage />
-      console.log(activeUser)
+    let [activeUser, setActiveUser] = useState(null)
+
+    //useEffect(()=>console.log('user changed'), [activeUser])
 
   return (
-      pageView
+        <UserContext.Provider value = {{activeUser, setActiveUser}}>
+            <Switch>
+                <Redirect exact from="/" to={ activeUser ? "/chat" : "/auth" } />
+                <Route path="/chat">
+                    <MainPage />
+                </Route>
+                <Route path="/auth">
+                    <LoginPage />
+                </Route>
+            </Switch>
+        </UserContext.Provider>
     )
 }
 
 export default App;
-
-/*const [users, setUsers] = useState([])
-useEffect(() => dataHandler.getUsers().then(result => setUsers(result)), [])
-return (
-  <div className="App">
-    {console.log(users)}
-  </div>
-);*/

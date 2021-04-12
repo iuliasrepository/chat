@@ -1,10 +1,11 @@
-import React from "react"
+import React, {useContext} from "react"
 import {Switch, Route, NavLink, Redirect} from "react-router-dom"
 import AuthForm from "./AuthForm/AuthForm"
 import RegisterForm from "./RegisterForm/RegisterForm"
+import { UserContext } from "../../dataHandler"
 import styles from './loginPage.module.sass'
 
-function LoginPage () {
+function LoginPage ( {setActiveUser} ) {
     return (
             <div className={styles.wrapper}>
                 <div className={styles.header}>
@@ -23,12 +24,16 @@ function LoginPage () {
                     </div>
                     <div className={styles.formWrapper}>
                         <Switch>
-                            <Redirect exact from="/" to="/auth" />
+                            {/*{
+                                useContext(UserContext).id
+                                ? <Redirect exact from="/" to="/auth" />
+                                : undefined
+                            }*/}
                             <Route exact path="/auth">
-                                <AuthForm />
+                                <AuthForm setActiveUser={setActiveUser} />
                             </Route>
                             <Route exact path="/register">
-                                <RegisterForm />
+                                <RegisterForm setActiveUser={setActiveUser} />
                             </Route>
                         </Switch>
                     </div>

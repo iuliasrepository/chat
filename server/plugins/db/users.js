@@ -40,7 +40,7 @@ module.exports = fp(async (fastify, opts) => {
             client.release()
             return rows
         },
-        addUser: async ({ login, email, password} ) => {
+        addUser: async ({ login, email, password } ) => {
             const
                 salt = crypto.randomBytes(8).toString('hex'),
                 hash = crypto.pbkdf2Sync(password, salt,

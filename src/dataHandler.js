@@ -1,18 +1,23 @@
+import React from 'react'
+
 const dataHandler = {
+
+
+
     getUsers : async () =>
         fetch('http://localhost:3000/users'/*, {mode: 'cors'}*/)
             .then(response => response.json()),
             //.then(result => console.log(result))
 
-    isNameExist : async name =>
-        fetch(`http://localhost:3000/users/name=${name}`/*, {mode: 'cors'}*/)
-            .then(response => response.json())
-            .then(result => !!(+result[0].count))
-            .catch(() => false),
-
-    isEmailExist : async email =>
-        fetch(`http://localhost:3000/users/email=${email}`/*, {mode: 'cors'}*/)
-            .then(response => response.json())
+    isDataExist : async ( fields = {} ) =>
+        fetch('http://localhost:3000/users/exist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(fields)
+        })
+            .then(response=>response.json())
             .then(result => !!(+result[0].count))
             .catch(() => false),
 
@@ -26,9 +31,15 @@ const dataHandler = {
         })
             .then(response=>response.json()),
 
-    authUser : async ({ email, password }) =>
-        fetch(`http://localhost:3000/users/${email}/${password}`)
+    authUser : async (data) =>
+        fetch(`http://localhost:3000/users/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(data)
+        })
             .then(response => response.json())
 }
-
-module.exports = dataHandler
+export const UserContext = React.createContext(null)
+export default dataHandler
