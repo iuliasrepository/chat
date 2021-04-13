@@ -1,21 +1,12 @@
-import React, {useContext} from "react"
+import React, {useContext, useEffect} from "react"
 import dataHandler, { UserContext } from "../../../dataHandler"
 import { useHistory } from "react-router-dom"
 import styles from "../loginForm.module.sass"
 
-function RegisterForm () {
+function RegisterForm ({ validationFormFields }) {
     const
         //userContext = useContext(UserContext),
         history = useHistory(),
-
-        confirmFields = ( fields ) => {
-            fields.forEach(field => field.setCustomValidity(''))
-        },
-
-        rejectFields = ( fields, msg = '' ) => {
-            fields.forEach(field => field.setCustomValidity(msg))
-        },
-
         handleClientErrors = err => {
             if (err.code === "23505") {
                 //const errField = err.constraint
@@ -24,7 +15,7 @@ function RegisterForm () {
                  : errField === "users_email_deleted_at_uindex"
                      ? [ [document.forms.registerForm.email], 'Такой email уже зарегистрирован']
                      : console.error('Уникальное поле не обработано')*/
-            rejectFields([document.forms.registerForm.login, document.forms.registerForm.email], 'Такой логин или email уже зарегистрирован')
+            validationFormFields.rejectFields([document.forms.registerForm.login, document.forms.registerForm.email], 'Такой логин или email уже зарегистрирован')
         } else
             console.log(err)
         },
@@ -60,10 +51,13 @@ function RegisterForm () {
                 currentForm = document.forms.registerForm,
                 fields = [currentForm.password, e.target]
             e.target.value === currentForm.password.value
-                ? confirmFields(fields)
-                : rejectFields(fields, 'Пароли не совпадают')
+                ? validationFormFields.confirmFields(fields)
+                : validationFormFields.rejectFields(fields, 'Пароли не совпадают')
         }
 
+    useEffect(()=> {
+        validationFormFields.confirmOnChange(validationFormFields.getFormInputs(document.forms.registerForm))
+    }, [] )
 
     return (
         <form name="registerForm" onSubmit={onSubmit}>

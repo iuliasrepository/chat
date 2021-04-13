@@ -4,6 +4,7 @@ import LoginPage from "./LoginPage/LoginPage";
 import MainPage from "./MainPage/MainPage";
 import { UserContext } from "../dataHandler";
 import {Redirect, Route, Switch} from "react-router-dom";
+import AuthForm from "./LoginPage/AuthForm/AuthForm";
 
 function App() {
     let [activeUser, setActiveUser] = useState(null)
@@ -17,7 +18,7 @@ function App() {
                 <Route path="/chat">
                     <MainPage />
                 </Route>
-                <Route path="/auth">
+                <Route path="/(auth|register)/">
                     <LoginPage />
                 </Route>
             </Switch>

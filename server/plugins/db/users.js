@@ -9,14 +9,14 @@ module.exports = fp(async (fastify, opts) => {
     fastify.decorate('users', {
         get: async () => {
             const client = await fastify.pg.connect()
-            const { rows } = await client.query('SELECT id, "name", "pass", email FROM users')
+            const { rows } = await client.query('SELECT id, "name", "pass", email FROM users WHERE deleted_at IS NULL')
             client.release()
             return rows
         },
         getById: async id => {
             const client = await fastify.pg.connect()
             const { rows } = await client.query(
-                'SELECT id, "name", "pass", email FROM users WHERE id=$1',
+                'SELECT id, "name", "pass", email FROM users WHERE id=$1 AND deleted_at IS NULL',
                 [id]
             )
             client.release()
@@ -25,7 +25,7 @@ module.exports = fp(async (fastify, opts) => {
         isNameExist: async name => {
             const client = await fastify.pg.connect()
             const { rows } = await client.query(
-                'SELECT COUNT(1) FROM users WHERE "name"=$1',
+                'SELECT COUNT(1) FROM users WHERE "name"=$1 AND deleted_at IS NULL',
                 [name]
             )
             client.release()
@@ -34,7 +34,7 @@ module.exports = fp(async (fastify, opts) => {
         isEmailExist: async email => {
             const client = await fastify.pg.connect()
             const { rows } = await client.query(
-                'SELECT COUNT(1) FROM users WHERE email=$1',
+                'SELECT COUNT(1) FROM users WHERE email=$1 AND deleted_at IS NULL',
                 [email]
             )
             client.release()
@@ -77,7 +77,7 @@ module.exports = fp(async (fastify, opts) => {
                 client.release()
                 return {id, name}
             } catch (err) {
-                return {err}
+                return {error : err}
             }
         }
     })

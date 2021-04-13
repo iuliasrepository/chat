@@ -1,9 +1,9 @@
-import React, {useContext, useState} from "react"
+import React, {useContext, useEffect, useState} from "react"
 import dataHandler, { UserContext } from "../../../dataHandler"
 import { useHistory } from "react-router-dom"
 import styles from "../loginForm.module.sass"
 
-function AuthForm ( ) {
+function AuthForm ({ validationFormFields }) {
     const
         userContext = useContext(UserContext),
         history = useHistory(),
@@ -13,12 +13,17 @@ function AuthForm ( ) {
                 data = Object.fromEntries(new FormData(e.target)),
                 response = await dataHandler.authUser(data)
             if (response.error)
-                console.log(response.error)
+                validationFormFields.rejectFields([document.forms.authForm.email, document.forms.authForm.password], 'Неверный email или пароль')
             else {
                 userContext.setActiveUser(response)
                 history.push('/chat')
             }
         }
+
+    useEffect(()=> {
+        validationFormFields.confirmOnChange(validationFormFields.getFormInputs(document.forms.authForm))
+    }, [] )
+
     return (
         <form name="authForm" onSubmit={onSubmit}>
             <div>

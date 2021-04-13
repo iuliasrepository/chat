@@ -5,7 +5,25 @@ import RegisterForm from "./RegisterForm/RegisterForm"
 import { UserContext } from "../../dataHandler"
 import styles from './loginPage.module.sass'
 
-function LoginPage ( {setActiveUser} ) {
+function LoginPage () {
+    const validationFormFields = {
+        confirmFields : fields => {
+            fields.forEach(field => field.setCustomValidity(''))
+        },
+
+        rejectFields : ( fields, msg = '' ) => {
+            fields.forEach(field => field.setCustomValidity(msg))
+        },
+
+        confirmOnChange : function (fields) {
+            fields.forEach(field =>
+                field.oninput = () => this.confirmFields([field])
+            )
+        },
+
+        getFormInputs : form =>
+            Array.from(form.querySelectorAll('input'))
+    }
     return (
             <div className={styles.wrapper}>
                 <div className={styles.header}>
@@ -24,16 +42,11 @@ function LoginPage ( {setActiveUser} ) {
                     </div>
                     <div className={styles.formWrapper}>
                         <Switch>
-                            {/*{
-                                useContext(UserContext).id
-                                ? <Redirect exact from="/" to="/auth" />
-                                : undefined
-                            }*/}
                             <Route exact path="/auth">
-                                <AuthForm setActiveUser={setActiveUser} />
+                                <AuthForm validationFormFields = {validationFormFields} />
                             </Route>
                             <Route exact path="/register">
-                                <RegisterForm setActiveUser={setActiveUser} />
+                                <RegisterForm validationFormFields = {validationFormFields} />
                             </Route>
                         </Switch>
                     </div>
